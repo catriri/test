@@ -36,6 +36,7 @@ public class FakeController {
         return fakeService.findRecord();
     }
 
+    // http request and response
     @RequestMapping("/http")
     public void http(HttpServletRequest request, HttpServletResponse response) {
         // receive request data
