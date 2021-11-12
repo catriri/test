@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -26,13 +27,13 @@ public class FakeController {
 
     @RequestMapping("/hello")
     @ResponseBody
-    public String hello(){
+    public String hello() {
         return "hello spring boot";
     }
 
     @RequestMapping("/data")
     @ResponseBody
-    public String getData(){
+    public String getData() {
         return fakeService.findRecord();
     }
 
@@ -43,7 +44,7 @@ public class FakeController {
         System.out.println(request.getMethod());
         System.out.println(request.getServletPath());
         Enumeration<String> enumeration = request.getHeaderNames();
-        while (enumeration.hasMoreElements()){
+        while (enumeration.hasMoreElements()) {
             String name = enumeration.nextElement();
             String value = request.getHeader(name);
             System.out.println(name + ": " + value);
@@ -66,7 +67,7 @@ public class FakeController {
     @ResponseBody
     public String getStudents(
             @RequestParam(name = "current", required = false, defaultValue = "1") int current,
-            @RequestParam(name = "limit", required = false, defaultValue = "10") int limit){
+            @RequestParam(name = "limit", required = false, defaultValue = "10") int limit) {
         System.out.println(current + "\n" + limit);
         return "students record";
     }
@@ -74,7 +75,7 @@ public class FakeController {
     // /student/123
     @GetMapping("/student/{id}")
     @ResponseBody
-    public String getStudent(@PathVariable("id") String id){
+    public String getStudent(@PathVariable("id") String id) {
         System.out.println(id);
         return "a student record";
     }
@@ -82,14 +83,14 @@ public class FakeController {
     // Post request
     @PostMapping("/student")
     @ResponseBody
-    public String addStudent(String name, int age){
+    public String addStudent(String name, int age) {
         System.out.println(name + "\n" + age);
         return "student added";
     }
 
     // Response html data
     @GetMapping("/teacher")
-    public ModelAndView getTeacher(){
+    public ModelAndView getTeacher() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("name", "Alex");
         modelAndView.addObject("age", 30);
@@ -98,7 +99,7 @@ public class FakeController {
     }
 
     @GetMapping("/school")
-    public String getSchool(Model model){
+    public String getSchool(Model model) {
         model.addAttribute("name", "No.1 School");
         model.addAttribute("address", "China");
         return "/demo/school";
@@ -108,7 +109,7 @@ public class FakeController {
     // Java object -> Json String -> JS object
     @GetMapping("/employee")
     @ResponseBody
-    public Map<String, Object> getEmployee(){
+    public Map<String, Object> getEmployee() {
         Map<String, Object> employee = new HashMap<>();
         employee.put("name", "Alex");
         employee.put("age", 30);
@@ -118,7 +119,7 @@ public class FakeController {
 
     @GetMapping("/employees")
     @ResponseBody
-    public List<Map<String, Object>> getEmployees(){
+    public List<Map<String, Object>> getEmployees() {
         List<Map<String, Object>> employees = new ArrayList<>();
 
         Map<String, Object> employee = new HashMap<>();
@@ -140,5 +141,26 @@ public class FakeController {
         employees.add(employee);
 
         return employees;
+    }
+
+    // cookie example
+    @GetMapping("/cookie/set")
+    @ResponseBody
+    public String setCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie("code", UUID.randomUUID().toString().replaceAll("-", ""));
+        // set cookie scope
+        cookie.setPath("/learn/fake");
+        // set lifetime
+        cookie.setMaxAge(60 * 10);
+
+        response.addCookie(cookie);
+        return "set cookie";
+    }
+
+    @GetMapping("/cookie/get")
+    @ResponseBody
+    public String getCookie(@CookieValue("code") String code) {
+        System.out.println(code);
+        return "get cookie";
     }
 }
