@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
@@ -162,5 +163,22 @@ public class FakeController {
     public String getCookie(@CookieValue("code") String code) {
         System.out.println(code);
         return "get cookie";
+    }
+
+    // session example
+    @GetMapping("/session/set")
+    @ResponseBody
+    public String setSession(HttpSession session){
+        session.setAttribute("id", 1);
+        session.setAttribute("name", "user1");
+        return "set session";
+    }
+
+    @GetMapping("/session/get")
+    @ResponseBody
+    public String getSession(HttpSession session){
+        System.out.println(session.getAttribute("id"));
+        System.out.println(session.getAttribute("name"));
+        return "get session";
     }
 }
